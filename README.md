@@ -2,18 +2,39 @@
 
 This repository contains codes to reproduce the results of the research paper "X". I have used Python to collect and clean data, and both Python and RStudio for text analysis. I have mentioned the runtime of each computationally expensive codes on top of it and the reproduction of the research requires following the file sequence in the `01_notebooks_&_py_files` folder. 
 
-The following mermaid plot illustrates the data journey,
+
+## Workflow
 
 ```mermaid
-flowchart TD
-    A[01_notebooks_&_py_files/01_data_collection.ipynb] -->|constructs raw data| B[(data)]
-    B -->|Data goes for handcoding| C[[Handcoding]]
-    C -->|Gender coded complete raw data| D[(01_notebooks_&_py_files/02_data_prep_sentiment.ipynb)]
-    D -->|Prepares data for text analysis and saves the data| B
-    D -->|Fitted plots| E((plot))
-    D -->|Keyness, wordclouds, and corpus characteristics| F[(01_notebooks_&_py_files/03_exploratory.rmd)]
-    F --> |Other plots|E
-    F --> G[(01_notebooks_&_py_files/04_stm.rmd)]
-    G --> |STM plots|E
+flowchart LR
 
-```
+    A[notebooks/01_data_collection.ipynb]
+    S[src/*.py]
+    M[(model)]
+    D[(data)]
+    C[[Hand Coding]]
+    B[notebooks/02_data_preparation.ipynb]
+    SA[notebooks/03_sentiment_analysis.ipynb]
+    STM[notebooks/04_stm.rmd]
+    R[notebooks/05_regressions.do]
+    O[(results)]
+
+    A -->|Data collection scripts| S
+    S -->|Downloads YouTube comments| D
+
+    D -->|Unsure videos| C
+    C -->|Gender labeled and clickbait removed| D
+
+    B -->|Preprocessing scripts| S
+    B -->|Transliteration model| M
+    D -->|Raw comments| B
+    B -->|cleaned, translated, transliterated| D
+
+    D -->|Prepared corpus| SA
+    SA -->|VADER outputs| O
+
+    D -->|Prepared corpus| STM
+    STM -->|STM model and plots| O
+
+    D -->|corpus with outputs of STM and VADER| R
+    R -->|Regression tables and statistics| O
